@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Beatles Lyric Quiz</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #fff8f0;
+      color: #222;
+      padding: 40px 20px;
+      text-align: center;
+    }
+
+    .quiz-container {
+      max-width: 700px;
+      margin: 0 auto;
+      background: #fff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: #b22222;
+    }
+
+    .lyric {
+      font-style: italic;
+      font-size: 1.2rem;
+      margin-bottom: 30px;
+    }
+
+    .choices button {
+      display: block;
+      margin: 10px auto;
+      padding: 10px 20px;
+      font-size: 1rem;
+      width: 100%;
+      max-width: 400px;
+      border: none;
+      background-color: #ffeaa7;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .choices button:hover {
+      background-color: #fab1a0;
+    }
+
+    .result {
+      font-weight: bold;
+      margin-top: 20px;
+    }
+
+    .score {
+      margin-top: 10px;
+      font-size: 1rem;
+    }
+
+    .next-btn {
+      margin-top: 30px;
+      padding: 10px 20px;
+      background-color: #81ecec;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .next-btn:hover {
+      background-color: #00cec9;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="quiz-container">
+    <h1>Guess the Beatles Song</h1>
+    <p class="lyric" id="lyric">Loading lyric...</p>
+    
+    <div class="choices" id="choices"></div>
+    
+    <div class="result" id="result"></div>
+    <div class="score" id="score">Score: 0</div>
+    <button class="next-btn" onclick="nextQuestion()">Next</button>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        lyric: "Yesterday, all my troubles seemed so far away",
+        correct: "Yesterday",
+        options: ["Hey Jude", "Let It Be", "Yesterday", "Help!"]
+      },
+      {
+        lyric: "He wear no shoeshine, he got toe-jam football",
+        correct: "Come Together",
+        options: ["Lucy in the Sky with Diamonds", "Come Together", "Helter Skelter", "Taxman"]
+      },
+      {
+        lyric: "When I find myself in times of trouble, Mother Mary comes to me",
+        correct: "Let It Be",
+        options: ["Yesterday", "Let It Be", "Hey Jude", "Something"]
+      },
+      {
+        lyric: "Hey Jude, don't make it bad, take a sad song and make it better",
+        correct: "Hey Jude",
+        options: ["Hey Jude", "Help!", "Penny Lane", "She Loves You"]
+      },
+      {
+        lyric: "All you need is love, love, love is all you need",
+        correct: "All You Need Is Love",
+        options: ["Love Me Do", "All You Need Is Love", "I Want to Hold Your Hand", "We Can Work It Out"]
+      },
+      {
+        lyric: "Happiness is a warm gun, bang bang shoot shoot",
+        correct: "Happiness Is a Warm Gun",
+        options: ["Happiness Is a Warm Gun", "I'm So Tired", "Revolution", "Glass Onion"]
+      },
+      {
+        lyric: "I'm only sleeping, keeping an eye on the world going by my window",
+        correct: "I'm Only Sleeping",
+        options: ["I'm Only Sleeping", "Rain", "Girl", "And Your Bird Can Sing"]
+      },
+      {
+        lyric: "You never give me your money, you only give me your funny paper",
+        correct: "You Never Give Me Your Money",
+        options: ["You Never Give Me Your Money", "Sun King", "Carry That Weight", "Golden Slumbers"]
+      },
+      {
+        lyric: "I've just seen a face I can't forget the time or place where we just met",
+        correct: "I've Just Seen a Face",
+        options: ["I've Just Seen a Face", "Things We Said Today", "Norwegian Wood", "If I Fell"]
+      },
+      {
+        lyric: "And in her eyes, you see nothing, no sign of love behind the tears",
+        correct: "For No One",
+        options: ["For No One", "Eleanor Rigby", "She's Leaving Home", "Girl"]
+      },
+      {
+        lyric: "Because the world is round it turns me on",
+        correct: "Because",
+        options: ["Because", "Tomorrow Never Knows", "Flying", "Within You Without You"]
+      },
+      {
+        lyric: "Is there anybody going to listen to my story all about the girl who came to stay?",
+        correct: "Girl",
+        options: ["Girl", "Michelle", "The Night Before", "You Won't See Me"]
+      }
+    ];
+
+    let current = 0;
+    let score = 0;
+
+    function shuffle(array) {
+      return array.sort(() => Math.random() - 0.5);
+    }
+
+    function displayQuestion() {
+      const q = questions[current];
+      document.getElementById('lyric').textContent = `"${q.lyric}"`;
+      const choicesDiv = document.getElementById('choices');
+      choicesDiv.innerHTML = "";
+
+      shuffle(q.options).forEach(option => {
+        const btn = document.createElement('button');
+        btn.textContent = option;
+        btn.onclick = () => checkAnswer(option);
+        choicesDiv.appendChild(btn);
+      });
+
+      document.getElementById('result').textContent = "";
+    }
+
+    function checkAnswer(selected) {
+      const q = questions[current];
+      const resultDiv = document.getElementById('result');
+
+      if (selected === q.correct) {
+        resultDiv.textContent = "✅ Correct!";
+        score++;
+      } else {
+        resultDiv.textContent = `❌ Incorrect! The correct answer was "${q.correct}".`;
+      }
+
+      document.getElementById('score').textContent = `Score: ${score}`;
+      // disable buttons
+      const buttons = document.querySelectorAll('#choices button');
+      buttons.forEach(btn => btn.disabled = true);
+    }
+
+    function nextQuestion() {
+      current++;
+      if (current < questions.length) {
+        displayQuestion();
+      } else {
+        document.getElementById('lyric').textContent = "You've completed the quiz!";
+        document.getElementById('choices').innerHTML = "";
+        document.getElementById('result').textContent = `Final Score: ${score} / ${questions.length}`;
+        document.querySelector('.next-btn').style.display = 'none';
+      }
+    }
+
+    // Start the quiz
+    displayQuestion();
+  </script>
+
+</body>
+</html>
